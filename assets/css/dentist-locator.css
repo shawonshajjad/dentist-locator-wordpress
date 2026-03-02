@@ -1,0 +1,315 @@
+/* ============================================================
+   1. SEARCH BOX & INTERACTIVE MAP LAYOUT
+   ============================================================ */
+.dentist-search-map {
+  display: flex;
+  flex-direction: row; /* Side-by-side on desktop */
+  gap: 20px;
+  margin: 20px 0;
+  font-family: Arial, sans-serif;
+}
+
+/* Panels */
+.search-box,
+.map-box {
+  background: #e6f4f1;
+  border-radius: 6px;
+  padding: 15px;
+  flex: 1;
+}
+
+.search-box h4 {
+  margin: 0 0 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.search-field label,
+.map-box label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #009688;
+}
+
+/* Input + Button Styling */
+.search-input {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid #ccc;
+}
+
+.search-input input {
+  border: none !important;
+  padding: 10px;
+  flex: 1;
+  font-size: 14px;
+  outline: none;
+}
+
+.search-input button {
+  background: #4aa89b;
+  border: none;
+  padding: 10px 15px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.3s;
+}
+
+.search-input button:hover {
+  background: #3b8a7f;
+}
+
+/* SVG Map Styling */
+.map-box {
+  text-align: center;
+}
+
+.map-box svg {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+#states path,
+#states g {
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+#states path:hover,
+#states g:hover,
+#states path.active,
+#states g.active {
+  filter: brightness(1.1) drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.3));
+  transform: translateY(-2px);
+}
+
+/* ============================================================
+   2. DENTIST RESULTS LIST (V1.4 Styles)
+   ============================================================ */
+#dentist-results {
+  margin-top: 20px;
+}
+
+.dma-dentists-title h4 {
+  background: #f1f7f6;
+  padding: 15px;
+  margin: 0;
+  color: #418681;
+  font-size: 16px;
+  border-radius: 6px 6px 0 0;
+  border: 1px solid #ddd;
+  border-bottom: none;
+}
+
+.dentist-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0; /* Items stack flush, separated by borders */
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 0 0 6px 6px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Sidebar Line Decoration */
+.dentist-list::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 4px;
+  background-color: #418681;
+  z-index: 1;
+}
+
+/* Individual Item Grid */
+.dentist-item {
+  display: grid;
+  grid-template-columns: 120px 1fr auto;
+  gap: 20px;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+  background-color: #fff;
+  transition: background-color 0.2s;
+}
+
+.dentist-item:last-child {
+  border-bottom: none;
+}
+
+.dentist-item:hover {
+  background-color: #f9fbfb;
+}
+
+/* Column 1: Images */
+.dentist-images {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.dentist-logo-container img {
+  max-width: 100px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.dentist-photo-container img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #f0f0f0;
+}
+
+/* Column 2: Details */
+.dentist-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dentist-details strong {
+  display: block;
+  font-size: 1.25em;
+  color: #418681;
+  font-weight: bold;
+}
+
+.dentist-doctor {
+  margin: 0;
+  font-style: italic;
+  color: #555;
+  font-size: 0.95em;
+}
+
+.dentist-info p {
+  margin: 2px 0;
+  font-size: 0.95em;
+  color: #666;
+  line-height: 1.4;
+}
+
+.view-on-map-link {
+  display: inline-block;
+  margin-top: 8px;
+  font-weight: bold;
+  color: #009688;
+  text-decoration: none;
+  font-size: 0.9em;
+}
+
+.view-on-map-link:hover {
+  text-decoration: underline;
+}
+
+/* Category Badges */
+.dentist-category-badge {
+  display: inline-block;
+  width: fit-content;
+  padding: 3px 12px;
+  font-size: 0.75em;
+  font-weight: bold;
+  color: #fff;
+  border-radius: 4px;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.badge-owned,
+.badge-preferred-provider,
+.badge-joint-venture {
+  background-color: #418681;
+}
+
+/* Column 3: Action Button */
+.dentist-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dentist-actions .button {
+  display: block;
+  padding: 10px 20px;
+  color: #fff !important;
+  background-color: #418681;
+  text-decoration: none;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 0.9em;
+  font-weight: bold;
+  transition:
+    filter 0.2s,
+    transform 0.2s;
+  min-width: 120px;
+  border: none;
+  cursor: pointer;
+}
+
+.dentist-actions .button:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+/* ============================================================
+   3. NO RESULTS & RESPONSIVE FIXES
+   ============================================================ */
+.no-results-box {
+  background: #e6f4f1;
+  border-radius: 0 0 6px 6px;
+  padding: 30px;
+  text-align: center;
+  border: 1px solid #ddd;
+  border-top: none;
+}
+
+.no-results-box p {
+  margin: 5px 0;
+  color: #009688;
+  line-height: 1.6;
+}
+
+.no-results-box p strong {
+  font-size: 1.1em;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .dentist-search-map {
+    flex-direction: column;
+  }
+
+  .search-box,
+  .map-box {
+    width: 100%;
+  }
+
+  .dentist-item {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 15px;
+    padding-left: 25px; /* Space for the green accent line */
+  }
+
+  .dentist-images,
+  .dentist-details {
+    align-items: center;
+  }
+
+  .dentist-actions {
+    margin-top: 10px;
+  }
+}
