@@ -1,72 +1,59 @@
 # Dentist Locator with Interactive Australia Map
 
-A custom WordPress directory plugin for discovering dental practices through an interactive SVG map of Australia and AJAX-powered search. The project combines a dedicated Dentist custom post type, structured practice metadata, state-based browsing, and a responsive frontend finder.
+A portfolio-grade WordPress directory/search plugin for Australian dental practices.
 
-## Highlights
+## Engineering highlights
 
-- **Dentist Custom Post Type** for managing dental practices in WordPress
-- **Interactive SVG map of Australia** covering WA, NT, SA, QLD, NSW, ACT, VIC and TAS
-- **AJAX search** without full-page reloads
-- Search by practice/doctor text, location and taxonomy data
-- **State-based filtering** directly from the map
-- Dentist metadata including address, phone, email, website, postcode, category and state
-- **Configurable no-results experience** through WordPress admin settings
-- Responsive frontend interface
-- Lightweight implementation using WordPress APIs, PHP, JavaScript and CSS
+- Namespaced-by-prefix class architecture with separated responsibilities
+- Public AJAX search protected by a WordPress nonce
+- Strict request allowlisting, sanitization and escaped output
+- Bounded queries rather than unbounded `posts_per_page => -1`
+- Search supports WordPress title/content search plus selected structured meta
+- Frontend assets load only when the shortcode is rendered
+- Accessible search controls, keyboard-operable state controls and ARIA live results
+- Abortable AJAX requests and user-facing network/error handling
+- Lazy-loaded images and safe external links
+- Sanitized Settings API values
+- Translation-ready user-facing strings
+- REST-enabled Dentist CPT
 
-## How It Works
+## Structure
 
-1. Administrators create and maintain records in the **Dentists List** custom post type.
-2. Practice details are stored as WordPress post metadata.
-3. The `[dentist_locator]` shortcode renders the public finder.
-4. Visitors can enter a search term or select an Australian state on the SVG map.
-5. JavaScript sends the request to WordPress AJAX endpoints and updates the result area dynamically.
-
-## Shortcode
-
-```text
-[dentist_locator]
 ```
-
-Add the shortcode to any WordPress page where the locator should appear.
-
-## Project Structure
-
-```text
-dentist-locator-wordpress/
-├── dentist-locator.php
-├── README.md
-└── assets/
-    ├── css/
-    │   └── dentist-locator.css
-    └── js/
-        └── dentist-locator.js
+dentist-locator.php
+includes/
+  class-dl-plugin.php
+  class-dl-post-type.php
+  class-dl-search.php
+  class-dl-settings.php
+templates/
+  locator.php
+  dentist-card.php
+assets/
+  css/dentist-locator.css
+  js/dentist-locator.js
 ```
-
-## Technical Overview
-
-- WordPress Custom Post Types
-- Post Meta / Metadata API
-- WordPress Settings API
-- `admin-ajax.php` AJAX handlers
-- Shortcode API
-- Interactive inline SVG
-- Vanilla JavaScript
-- Responsive CSS
 
 ## Installation
 
-1. Download or clone the repository.
-2. Copy it to `wp-content/plugins/dentist-locator-wordpress/`.
-3. Activate the plugin from **Plugins** in WordPress.
-4. Add dentist records from the WordPress dashboard.
-5. Place `[dentist_locator]` on the required page.
+1. Copy the plugin directory into `wp-content/plugins/`.
+2. Activate **Dentist Locator with Interactive Australia Map**.
+3. Add dentist records under **Dentists**.
+4. Configure **Dentists → Locator Settings**.
+5. Add `[dentist_locator]` to a page.
 
-## Portfolio Note
+## Security
 
-This repository demonstrates a custom WordPress directory/search solution built around a real-world location-discovery workflow rather than a generic listing template. The map, search, custom content model and administrative settings are implemented as plugin functionality.
+The public search endpoint verifies a nonce, allowlists filter types/state values, unslashes and sanitizes request values, limits input length and result count, and escapes output at render time.
+
+## Accessibility
+
+The locator uses native buttons for state selection, visible keyboard focus, associated labels, a named search button, an ARIA live result region and reduced-motion support.
+
+## Performance
+
+Results are bounded to 50 records per request, unnecessary term-cache work is disabled, stale frontend requests are aborted, images are lazy loaded, and plugin assets are enqueued only when the shortcode renders.
 
 ## Author
 
-**Sajjadur Rahaman Shawon**  
-GitHub: https://github.com/shawonshajjad
+Shajjadur Rahaman Shawon
