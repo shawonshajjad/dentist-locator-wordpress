@@ -13,19 +13,9 @@ final class DL_Search {
         if ( ! in_array( $type, array( 'state', 'search' ), true ) || '' === $value ) {
             wp_send_json_error( array( 'message' => __( 'Enter a search term or choose a state.', 'dentist-locator' ) ), 400 );
         }
-
-        if ( mb_strlen( $value ) > 100 ) {
+        if ( strlen( $value ) > 100 ) {
             wp_send_json_error( array( 'message' => __( 'Search term is too long.', 'dentist-locator' ) ), 400 );
         }
-
-        $args = array(
-            'post_type'              => 'dentist',
-            'post_status'            => 'publish',
-            'posts_per_page'         => self::MAX_RESULTS,
-            'no_found_rows'          => true,
-            'ignore_sticky_posts'    => true,
-            'update_post_term_cache' => false,
-        );
 
         if ( 'state' === $type ) {
             $states = array( 'WA', 'NT', 'SA', 'QLD', 'NSW', 'ACT', 'VIC', 'TAS' );
@@ -33,18 +23,15 @@ final class DL_Search {
             if ( ! in_array( $state, $states, true ) ) {
                 wp_send_json_error( array( 'message' => __( 'Invalid state.', 'dentist-locator' ) ), 400 );
             }
+            $args = self::base_args();
             $args['meta_query'] = array(
                 array( 'key' => 'state', 'value' => $state, 'compare' => '=' ),
             );
         } else {
-            $args['s'] = $value;
-            $args['meta_query'] = array(
-                'relation' => 'OR',
-                array( 'key' => 'postcode', 'value' => $value, 'compare' => 'LIKE' ),
-                array( 'key' => 'address', 'value' => $value, 'compare' => 'LIKE' ),
-                array( 'key' => 'doctors_name', 'value' => $value, 'compare' => 'LIKE' ),
-                array( 'key' => 'dentist_category', 'value' => $value, 'compare' => 'LIKE' ),
-            );
+            $ids = self::search_ids( $value );
+            $args = self::base_args();
+            $args['post__in'] = $ids ? $ids : array( 0 );
+            $args['orderby'] = 'post__in';
         }
 
         $query = new WP_Query( $args );
@@ -63,6 +50,49 @@ final class DL_Search {
 
         wp_reset_postdata();
         wp_send_json_success( array( 'html' => ob_get_clean() ) );
+    }
+
+    private static function base_args() {
+        return array(
+            'post_type'              => 'dentist',
+            'post_status'            => 'publish',
+            'posts_per_page'         => self::MAX_RESULTS,
+            'no_found_rows'          => true,
+            'ignore_sticky_posts'    => true,
+            'update_post_term_cache' => false,
+        );
+    }
+
+    private static function search_ids( $value ) {
+        $text_ids = get_posts(
+            array(
+                'post_type'      => 'dentist',
+                'post_status'    => 'publish',
+                'posts_per_page' => self::MAX_RESULTS,
+                'fields'         => 'ids',
+                's'              => $value,
+                'no_found_rows'  => true,
+            )
+        );
+
+        $meta_ids = get_posts(
+            array(
+                'post_type'      => 'dentist',
+                'post_status'    => 'publish',
+                'posts_per_page' => self::MAX_RESULTS,
+                'fields'         => 'ids',
+                'no_found_rows'  => true,
+                'meta_query'     => array(
+                    'relation' => 'OR',
+                    array( 'key' => 'postcode', 'value' => $value, 'compare' => 'LIKE' ),
+                    array( 'key' => 'address', 'value' => $value, 'compare' => 'LIKE' ),
+                    array( 'key' => 'doctors_name', 'value' => $value, 'compare' => 'LIKE' ),
+                    array( 'key' => 'dentist_category', 'value' => $value, 'compare' => 'LIKE' ),
+                ),
+            )
+        );
+
+        return array_slice( array_values( array_unique( array_merge( $text_ids, $meta_ids ) ) ), 0, self::MAX_RESULTS );
     }
 
     private static function no_results() {
