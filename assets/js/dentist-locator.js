@@ -1,41 +1,69 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
   const results = document.getElementById("dentist-results");
-  const mapStates = document.querySelectorAll("#states > path, #states > g");
-  const searchInput = document.getElementById("dentist-search");
-  const searchBtn = document.getElementById("dentist-search-btn");
+  const input = document.getElementById("dentist-search");
+  const searchButton = document.getElementById("dentist-search-btn");
+  const stateButtons = document.querySelectorAll(".state-button");
+  if (!results || !input || !searchButton || !window.dentistLocator) return;
 
-  function fetchDentists(type, value) {
-    let data = new FormData();
-    data.append("action", "fetch_dentists");
+  let controller = null;
+
+  async function fetchDentists(type, value) {
+    value = String(value || "").trim();
+    if (!value) {
+      results.textContent = "Enter a search term or choose a state.";
+      return;
+    }
+
+    if (controller) controller.abort();
+    controller = new AbortController();
+
+    const data = new FormData();
+    data.append("action", "dl_fetch_dentists");
+    data.append("nonce", dentistLocator.nonce);
     data.append("filter_type", type);
     data.append("filter_value", value);
 
-    results.innerHTML = "<p>Loading...</p>";
+    results.setAttribute("aria-busy", "true");
+    results.textContent = dentistLocator.i18n.loading;
 
-    fetch(dentistLocatorAjax.ajax_url, { method: "POST", body: data })
-      .then((res) => res.text())
-      .then((html) => (results.innerHTML = html));
+    try {
+      const response = await fetch(dentistLocator.ajaxUrl, {
+        method: "POST",
+        body: data,
+        credentials: "same-origin",
+        signal: controller.signal,
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const payload = await response.json();
+      if (!payload.success || !payload.data || typeof payload.data.html !== "string") {
+        throw new Error("Invalid response");
+      }
+      results.innerHTML = payload.data.html;
+    } catch (error) {
+      if (error.name !== "AbortError") {
+        results.textContent = dentistLocator.i18n.error;
+      }
+    } finally {
+      results.removeAttribute("aria-busy");
+    }
   }
 
-  mapStates.forEach(function (el) {
-    el.addEventListener("click", function () {
-      mapStates.forEach((p) => p.classList.remove("active"));
-      this.classList.add("active");
-      fetchDentists("state", this.id);
-    });
+  function selectState(button) {
+    stateButtons.forEach((item) => item.setAttribute("aria-pressed", "false"));
+    button.setAttribute("aria-pressed", "true");
+    fetchDentists("state", button.dataset.state);
+  }
+
+  stateButtons.forEach((button) => {
+    button.setAttribute("aria-pressed", "false");
+    button.addEventListener("click", () => selectState(button));
   });
 
-  function performSearch() {
-    mapStates.forEach((p) => p.classList.remove("active"));
-    fetchDentists("search", searchInput.value.trim());
-  }
-
-  searchBtn.addEventListener("click", performSearch);
-
-  searchInput.addEventListener("keypress", function (e) {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      performSearch();
+  searchButton.addEventListener("click", () => fetchDentists("search", input.value));
+  input.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      fetchDentists("search", input.value);
     }
   });
 });
