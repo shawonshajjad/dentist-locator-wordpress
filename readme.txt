@@ -1,35 +1,23 @@
 === Dentist Locator with Interactive Australia Map ===
 Contributors: shawonshajjad
-Tags: dentist, directory, locator, australia, ajax, map
+Tags: dentist, directory, locator, australia, ajax
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 1.2
+Stable tag: 2.0.0
 
-A custom WordPress dentist directory with an interactive Australian SVG map and AJAX-powered search.
+Accessible AJAX-powered dentist locator for WordPress.
 
 == Description ==
 
-Dentist Locator provides a dedicated Dentist custom post type and a responsive public finder. Visitors can search dental practices or select an Australian state directly from the interactive map. Results are loaded through WordPress AJAX without a full page refresh.
-
-Features include:
-
-* Dentist custom post type
-* Interactive Australia state map
-* AJAX-powered search and filtering
-* Practice metadata management
-* State and location discovery
-* Configurable no-results messaging
-* Responsive frontend
-* Shortcode: [dentist_locator]
-
-== Installation ==
-
-1. Upload the plugin folder to /wp-content/plugins/.
-2. Activate the plugin through the WordPress Plugins screen.
-3. Add dentist records in the WordPress dashboard.
-4. Add [dentist_locator] to the page where the finder should appear.
+Provides a Dentist custom post type, searchable practice metadata, accessible state controls, configurable no-results messaging, and a secured AJAX search endpoint.
 
 == Changelog ==
 
-= 1.2 =
-* Current public portfolio version.
+= 2.0.0 =
+* Refactored plugin into maintainable classes and templates.
+* Added AJAX nonce verification and strict request validation.
+* Added bounded queries and conditional asset loading.
+* Added output escaping and Settings API sanitization.
+* Added accessible state controls, labels, live results and focus styles.
+* Added fetch error handling and stale-request cancellation.
+* Added translation-ready strings and safer external links.
